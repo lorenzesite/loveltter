@@ -1,0 +1,428 @@
+/* =========================
+   1. BASIC SETTINGS
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --pink: #ff6f9f;
+    --dark-pink: #d6336c;
+    --light-pink: #ffe5ed;
+    --cream: #fffaf7;
+    --text: #8b3153;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--text);
+
+    background:
+        radial-gradient(circle at 20% 20%,
+            #fff6fa 0%, transparent 35%),
+        radial-gradient(circle at 80% 80%,
+            #ffc7dc 0%, transparent 40%),
+        linear-gradient(135deg, #fff0f5, #ffc4d8);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 35px 15px;
+}
+
+/* =========================
+   2. MAIN CONTAINER
+========================= */
+
+.container {
+    width: 100%;
+    max-width: 650px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.small-title {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: #c45179;
+    margin-bottom: 16px;
+}
+
+h1 {
+    font-size: clamp(28px, 6vw, 44px);
+    line-height: 1.2;
+    margin-bottom: 12px;
+    color: #a72d5b;
+    animation: fadeDown 1s ease;
+}
+
+.subtitle {
+    font-size: 15px;
+    color: #a65a77;
+    margin-bottom: 35px;
+}
+
+/* =========================
+   3. ENVELOPE
+========================= */
+
+.envelope {
+    position: relative;
+    width: min(320px, 85vw);
+    height: 210px;
+    margin: 0 auto 35px;
+    perspective: 1000px;
+    isolation: isolate;
+    filter: drop-shadow(0 15px 18px #c65b8025);
+}
+
+/* Back of envelope */
+
+.envelope-back {
+    position: absolute;
+    inset: 0;
+    background: #f59bb9;
+    border-radius: 8px;
+    z-index: 0;
+}
+
+/* The letter inside */
+
+.letter {
+    position: absolute;
+    left: 5%;
+    bottom: 5px;
+    width: 90%;
+    height: 190px;
+    background: var(--cream);
+    border: 1px solid #f5d7e1;
+    border-radius: 6px;
+    overflow: hidden;
+
+    transform: translateY(0);
+    transition:
+        transform 1s ease,
+        height 1s ease;
+
+    z-index: 1;
+    text-align: left;
+}
+
+.letter-content {
+    padding: 24px 20px;
+}
+
+.letter-label {
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #d16b8e;
+    margin-bottom: 15px;
+}
+
+.letter h2 {
+    font-size: 23px;
+    font-weight: normal;
+    margin-bottom: 15px;
+    color: #ad3d65;
+}
+
+#message {
+    font-size: 15px;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    min-height: 30px;
+}
+
+#message::after {
+    content: "";
+    display: inline-block;
+    height: 15px;
+    border-right: 2px solid #e36d96;
+    margin-left: 3px;
+    animation: blink 0.7s step-end infinite;
+}
+
+#message.finished::after {
+    display: none;
+}
+
+.signature {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #c34472;
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.signature.show {
+    opacity: 1;
+}
+
+/* Envelope front pocket */
+
+.envelope-front {
+    position: absolute;
+    inset: 0;
+    background: #f7a7c1;
+
+    clip-path: polygon(
+        0 0,
+        50% 57%,
+        100% 0,
+        100% 100%,
+        0 100%
+    );
+
+    border-radius: 0 0 8px 8px;
+    z-index: 3;
+}
+
+/* Envelope flap */
+
+.flap {
+    position: absolute;
+    inset: 0;
+    background: #e97fa4;
+
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        50% 58%
+    );
+
+    transform-origin: top center;
+    transform: rotateX(0deg);
+    transition:
+        transform 0.8s ease,
+        z-index 0s 0.4s;
+
+    backface-visibility: visible;
+    z-index: 4;
+}
+
+/* Heart seal */
+
+.seal {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+
+    display: grid;
+    place-items: center;
+
+    background: #d6336c;
+    color: white;
+    font-size: 25px;
+
+    box-shadow: 0 4px 12px #9d28522e;
+    z-index: 5;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+/* =========================
+   4. OPEN ENVELOPE ANIMATION
+========================= */
+
+.envelope.open .flap {
+    transform: rotateX(180deg);
+    z-index: 0;
+    transition:
+        transform 0.8s ease,
+        z-index 0s;
+}
+
+.envelope.open .letter {
+    transform: translateY(-90px);
+    height: 360px;
+    overflow-y: auto;
+    z-index: 2;
+    transition:
+        transform 1s ease,
+        height 1s ease;
+}
+
+.envelope.open .seal {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+    pointer-events: none;
+}
+
+/* =========================
+   5. BUTTONS
+========================= */
+
+button {
+    border: none;
+    border-radius: 50px;
+    padding: 14px 27px;
+
+    background: linear-gradient(
+        135deg,
+        #ff85aa,
+        #e64f83
+    );
+
+    color: white;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+
+    box-shadow: 0 8px 20px #d84e7c30;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px #d84e7c45;
+}
+
+button:focus-visible {
+    outline: 3px solid #a72d5b;
+    outline-offset: 4px;
+}
+
+#restartBtn {
+    margin-left: 8px;
+}
+
+button[hidden] {
+    display: none;
+}
+
+.hint {
+    font-size: 12px;
+    margin-top: 22px;
+    color: #a65a77;
+}
+
+footer {
+    margin-top: 35px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #bd6485;
+}
+
+footer span {
+    color: #e64f83;
+}
+
+/* =========================
+   6. FLOATING HEARTS
+========================= */
+
+#hearts {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-heart {
+    position: absolute;
+    bottom: -40px;
+    color: #e85e90;
+    opacity: 0;
+
+    animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 0.65;
+    }
+
+    85% {
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* =========================
+   7. OTHER ANIMATIONS
+========================= */
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile screen adjustments */
+
+@media (max-width: 420px) {
+    .subtitle {
+        font-size: 13px;
+    }
+
+    .envelope {
+        height: 190px;
+    }
+
+    .letter-content {
+        padding: 20px 15px;
+    }
+
+    #message {
+        font-size: 14px;
+    }
+
+    #restartBtn {
+        margin: 10px 0 0;
+    }
+}
+
+/* Respect reduced-motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
+}
